@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Raghav Buildcon design tokens                                       */
+/* ------------------------------------------------------------------ */
+@theme {
+  /* Charcoal-navy: primary surfaces and text */
+  --color-ink-950: #070b14;
+  --color-ink-900: #0b1220;
+  --color-ink-800: #121b2e;
+  --color-ink-700: #1c2740;
+  --color-ink-600: #2a3855;
+  --color-ink-500: #45536f;
+  --color-ink-400: #6b7891;
+  --color-ink-300: #9aa4b8;
+  --color-ink-200: #c9cfdb;
+  --color-ink-100: #e6e9ef;
+  --color-ink-50: #f4f5f8;
+
+  /* Construction gold: accent, CTAs, highlights */
+  --color-gold-200: #fbe2b0;
+  --color-gold-300: #f7c873;
+  --color-gold-400: #f2b04a;
+  --color-gold-500: #e8962a;
+  --color-gold-600: #c97a14;
+  --color-gold-700: #a05f0f;
+  --color-gold-800: #7a480c;
+
+  /* Warm stone: light section backgrounds */
+  --color-sand-50: #faf8f4;
+  --color-sand-100: #f3efe7;
+  --color-sand-200: #e7e0d2;
+  --color-sand-300: #d6cbb5;
+
+  /* Muted green: sustainability accents only */
+  --color-leaf-50: #f1f5ec;
+  --color-leaf-100: #e1ead6;
+  --color-leaf-500: #5f7f48;
+  --color-leaf-600: #46663e;
+  --color-leaf-700: #34502f;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-fade-up: fade-up 0.9s var(--ease-out-expo) both;
+  --animate-fade-in: fade-in 1.2s ease-out both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 28px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background-color: var(--color-white);
+    color: var(--color-ink-800);
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-stretch: 94%;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-gold-300);
+    color: var(--color-ink-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-500);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Utilities                                                           */
+/* ------------------------------------------------------------------ */
+
+/* Engineering-drawing grid used on dark surfaces */
+@utility bg-blueprint {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+/* The same grid for light surfaces */
+@utility bg-blueprint-light {
+  background-image:
+    linear-gradient(to right, rgb(11 18 32 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(11 18 32 / 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
