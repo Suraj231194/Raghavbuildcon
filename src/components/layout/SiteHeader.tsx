@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -10,7 +9,6 @@ import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { mainNav, type NavItem } from "@/content/navigation";
 import { cn } from "@/lib/site";
-import { photos } from "@/content/images";
 
 function isActive(item: NavItem, pathname: string) {
   const match = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
@@ -253,15 +251,18 @@ function MegaPanel({ item }: { item: NavItem }) {
           </li>
         ))}
       </ul>
-      <Link href={item.href} className="group relative col-span-4 flex min-h-64 flex-col justify-end overflow-hidden p-7">
-        <Image src={photos.aerial.src} alt={photos.aerial.alt} fill sizes="420px" className="object-cover transition-transform duration-700 group-hover:scale-105" />
-        <span className="absolute inset-0 bg-linear-to-t from-ink-950 via-ink-950/70 to-ink-950/10" />
+      <Link href={item.href} className="group relative col-span-4 flex min-h-64 flex-col justify-between overflow-hidden bg-ink-950 bg-blueprint p-7">
+        <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-25 bg-gold-500 transition-transform duration-500 group-hover:scale-x-100" />
+        <span className="flex size-12 items-center justify-center rounded-sm bg-gold-500 text-ink-950">
+          <Icon name="layers" className="size-6" />
+        </span>
         <span className="relative">
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold-400">Our expertise</span>
           <span className="mt-2 flex items-center gap-2 font-display text-xl font-semibold text-white">
             Explore every vertical
             <Icon name="arrow-right" className="size-5 transition-transform group-hover:translate-x-1" />
           </span>
+          <span className="mt-2 block text-sm leading-relaxed text-ink-300">Roads, bridges, culverts, pipelines, buildings and allied works.</span>
         </span>
       </Link>
     </div>

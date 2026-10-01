@@ -29,7 +29,8 @@ export function PageHero({ eyebrow, title, lead, image, breadcrumbs, children, s
         src={image}
         alt=""
         fill
-        preload
+        loading="eager"
+        fetchPriority="high"
         sizes="100vw"
         className="-z-30 animate-fade-in object-cover opacity-70"
         style={{ objectPosition: imagePosition }}
