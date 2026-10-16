@@ -45,18 +45,29 @@ export const contact = {
 /** Optional social profiles. Leave empty to hide the social links entirely. */
 export const social: { label: string; href: string }[] = [];
 
-/** Headline figures. Set `value` once the figure is verified; `null` renders a placeholder. */
+/** Verified proprietor information supplied by the company. */
+export const proprietor = {
+  name: "Mr. Sagar Wale",
+  role: "Proprietor",
+  image: { src: "/images/sagar-wale.jpeg", alt: "Mr. Sagar Wale, proprietor of Raghav Buildcon" },
+  profilePath: "/about/proprietor",
+  bio: [
+    "Mr. Sagar Wale is a Civil Engineering professional with a degree in Civil Engineering completed in 2017 and over 8 years of professional experience in the construction industry.",
+    "His experience spans road infrastructure and building works, with hands-on involvement in project execution, site supervision, quality control, planning, and coordination.",
+    "Through Raghav Buildcon, he brings his technical knowledge and field experience together with a commitment to quality workmanship, professional execution, and delivering reliable civil infrastructure solutions.",
+  ],
+};
+
+/** Company facts and proprietor qualifications; experience is personal, not company age. */
 export const stats: Stat[] = [
   { label: "Established", value: null, text: "2026" },
-  { label: "Projects delivered", value: null, suffix: "+" },
-  { label: "Lane-km of roads built", value: null },
-  { label: "Engineers & professionals", value: null, suffix: "+" },
+  { label: "Years of proprietor experience", value: 8, suffix: "+" },
+  { label: "Proprietor's Civil Engineering graduation", value: null, text: "2017" },
+  { label: "Areas of civil works", value: company.works.length },
 ];
 
 export const leadership: Leader[] = [
-  { name: null, role: null, bio: null },
-  { name: null, role: null, bio: null },
-  { name: null, role: null, bio: null },
+  { name: proprietor.name, role: proprietor.role, bio: proprietor.bio.join(" "), image: proprietor.image, profilePath: proprietor.profilePath },
 ];
 
 /** Registrations, certifications and empanelments. Empty slots render as placeholders. */

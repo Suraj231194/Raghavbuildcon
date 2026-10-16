@@ -10,8 +10,7 @@ const SUCCESS = "Thank you — your enquiry has been received. Our team will get
  * Validates an enquiry and forwards it to CONTACT_WEBHOOK_URL (any HTTPS endpoint that accepts
  * JSON — a CRM, a form service or an email relay).
  *
- * Without a webhook the enquiry is only logged in development; in production the visitor is
- * told that online enquiries are unavailable, so no message is ever silently dropped.
+ * Only report success after the configured receiver accepts the enquiry.
  */
 export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Promise<EnquiryState> {
   const get = (key: string) => String(formData.get(key) ?? "").trim();
@@ -41,12 +40,9 @@ export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Pr
     return { status: "error", message: "Please correct the highlighted fields and try again.", errors, values };
   }
 
-  const webhook = process.env.CONTACT_WEBHOOK_URL;
+  const webhook = process.env.CONTACT_WEBHOOK_URL?.trim();
   if (!webhook) {
-    if (process.env.NODE_ENV !== "production") {
-      console.info(`[enquiry] CONTACT_WEBHOOK_URL is not set — "${values.enquiryType}" enquiry accepted in development but not delivered.`);
-      return { status: "success", message: SUCCESS };
-    }
+    console.error("[enquiry] delivery unavailable: CONTACT_WEBHOOK_URL is not configured.");
     return {
       status: "error",
       message: "Online enquiries are not available at the moment. Please contact us by phone or email instead.",
@@ -55,12 +51,14 @@ export async function submitEnquiry(_prev: EnquiryState, formData: FormData): Pr
   }
 
   try {
+    if (new URL(webhook).protocol !== "https:") throw new Error("CONTACT_WEBHOOK_URL must use HTTPS");
     const res = await fetch(webhook, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ ...values, submittedAt: new Date().toISOString() }),
       signal: AbortSignal.timeout(10_000),
       cache: "no-store",
+      redirect: "error",
     });
     if (!res.ok) throw new Error(`Enquiry webhook responded with ${res.status}`);
   } catch (error) {

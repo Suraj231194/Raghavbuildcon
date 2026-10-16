@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: { path: string; priority: number }[] = [
     { path: "/", priority: 1 },
     { path: "/about", priority: 0.8 },
+    { path: "/about/proprietor", priority: 0.7 },
     { path: "/expertise", priority: 0.9 },
     { path: "/projects", priority: 0.9 },
     { path: "/signature-projects", priority: 0.8 },

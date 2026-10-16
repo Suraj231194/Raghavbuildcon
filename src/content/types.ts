@@ -93,6 +93,8 @@ export type Leader = {
   name: Pending<string>;
   role: Pending<string>;
   bio: Pending<string>;
+  image?: ImageAsset;
+  profilePath?: string;
 };
 
 export type Credential = {

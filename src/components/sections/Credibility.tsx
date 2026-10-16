@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 import { Pending } from "@/components/ui/Placeholder";
 import { Reveal } from "@/components/ui/Reveal";
@@ -15,7 +17,7 @@ function initials(name: string) {
 /** Leadership profiles. Unconfirmed profiles render as clearly-marked placeholders. */
 export function LeadershipGrid({ showBio = false }: { showBio?: boolean }) {
   return (
-    <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className={leadership.length === 1 ? "grid max-w-3xl gap-5" : "grid gap-5 sm:grid-cols-2 lg:grid-cols-3"}>
       {leadership.map((leader, i) => (
         <Reveal as="li" key={i} delay={i * 90} className="group rounded-sm border border-ink-100 bg-white p-7">
           <div className="flex items-center gap-5">
@@ -23,7 +25,7 @@ export function LeadershipGrid({ showBio = false }: { showBio?: boolean }) {
               aria-hidden="true"
               className="relative flex size-18 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-ink-950 font-display text-xl font-semibold text-gold-400"
             >
-              {leader.name ? initials(leader.name) : <Icon name="users" className="size-7 text-ink-500" />}
+              {leader.image ? <Image src={leader.image.src} alt="" fill sizes="72px" className="object-cover object-top" /> : leader.name ? initials(leader.name) : <Icon name="users" className="size-7 text-ink-500" />}
               <span className="absolute inset-x-0 bottom-0 h-1 bg-gold-500" />
             </span>
             <div className="min-w-0">
@@ -35,6 +37,11 @@ export function LeadershipGrid({ showBio = false }: { showBio?: boolean }) {
             <p className="mt-6 border-t border-ink-100 pt-5 text-[0.95rem] leading-relaxed text-ink-500">
               {leader.bio ?? <Pending>Profile to be updated</Pending>}
             </p>
+          ) : null}
+          {leader.profilePath ? (
+            <Link href={leader.profilePath} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-gold-700 hover:text-gold-800">
+              About the Proprietor <Icon name="arrow-right" className="size-4" />
+            </Link>
           ) : null}
         </Reveal>
       ))}

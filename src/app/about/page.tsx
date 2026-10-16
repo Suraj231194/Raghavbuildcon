@@ -8,7 +8,7 @@ import { Icon } from "@/components/ui/Icon";
 import { OrPending, Pending } from "@/components/ui/Placeholder";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { company, milestones } from "@/content/company";
+import { company, milestones, proprietor } from "@/content/company";
 import { photos } from "@/content/images";
 import { pageMetadata } from "@/lib/seo";
 
@@ -63,7 +63,8 @@ export default function AboutPage() {
           <Reveal delay={150} className="lg:col-span-5">
             <dl className="divide-y divide-ink-100 rounded-sm border border-ink-100 bg-sand-50">
               {[
-                { label: "Registered name", value: company.legalName },
+                { label: "Company name", value: company.name },
+                { label: "Proprietor", value: proprietor.name },
                 { label: "Founded", value: company.founded },
                 { label: "Headquarters", value: company.headquarters },
                 { label: "Registration / CIN", value: company.registration },

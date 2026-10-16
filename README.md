@@ -18,7 +18,7 @@ Requires Node.js 20.9 or later. Copy `.env.example` to `.env.local` and set:
 | Variable | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, robots and structured data. |
-| `CONTACT_WEBHOOK_URL` | HTTPS endpoint that receives enquiry-form submissions as JSON. Without it, production visitors are told to phone or email instead, so no enquiry is silently lost. |
+| `CONTACT_WEBHOOK_URL` | Optional legacy server-action receiver; the enquiry forms now open WhatsApp and do not require it. |
 
 ## Pages
 
@@ -112,7 +112,11 @@ This project includes `vercel.json` with the Next.js preset, reproducible `npm c
 1. Push this project to your Git provider and import the repository in Vercel, or run `vercel --prod` from this folder after signing in.
 2. Set the Root Directory to the folder containing `package.json` and `vercel.json`. Keep the default Next.js output directory.
 3. Optionally set `NEXT_PUBLIC_SITE_URL` to your custom HTTPS domain, with no trailing slash. When omitted, metadata and sitemap URLs use Vercel's production domain automatically.
-4. Set `CONTACT_WEBHOOK_URL` to your HTTPS enquiry receiver to enable form delivery. Without it, the production form directs visitors to phone or email.
+4. Enquiry forms open WhatsApp to the published company phone number in `src/content/company.ts`. Ensure this number is registered with WhatsApp. Visitors review the formatted draft and tap Send; no webhook or email credentials are required.
 5. Deploy. Check the home page, contact page, `/sitemap.xml`, and `/robots.txt` at the deployed URL.
 
 Environment variable changes require a new deployment. No Vercel account or credentials are included in this project; publishing requires signing into your own Vercel account.
+
+## WhatsApp enquiries
+
+Contact and careers forms validate required fields and consent, then open `wa.me` with a URL-encoded message containing name, organisation, email, phone, enquiry type and the original message. Optional empty details are marked "Not provided". The visitor must tap Send in WhatsApp; opening the draft does not confirm delivery. Form values remain available when returning to the page. No WhatsApp message is sent by the website itself.

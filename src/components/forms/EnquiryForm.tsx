@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { submitEnquiry } from "@/lib/actions/enquiry";
-import { ENQUIRY_TYPES, MESSAGE_MAX, initialEnquiryState, type EnquiryField, type EnquiryType } from "@/lib/enquiry";
+import { contact } from "@/content/company";
+import { ENQUIRY_TYPES, MESSAGE_MAX, initialEnquiryState, type EnquiryState, type EnquiryField, type EnquiryType } from "@/lib/enquiry";
 import { cn } from "@/lib/site";
 
 type EnquiryFormProps = {
@@ -14,55 +14,86 @@ type EnquiryFormProps = {
   messagePlaceholder?: string;
 };
 
-/** Enquiry form. Re-mounting via `key` gives a clean form after a successful submission. */
-export function EnquiryForm(props: EnquiryFormProps) {
-  const [round, setRound] = useState(0);
-  return <EnquiryFormInner key={round} {...props} onReset={() => setRound((r) => r + 1)} />;
-}
-
-function EnquiryFormInner({
+/** Validates locally and opens a formatted WhatsApp draft without a backend. */
+export function EnquiryForm({
   defaultType = "Project or tender enquiry",
   submitLabel = "Send enquiry",
   messageLabel = "How can we help?",
   messagePlaceholder = "Tell us about your project, location, timelines and scope.",
-  onReset,
-}: EnquiryFormProps & { onReset: () => void }) {
-  const [state, formAction, pending] = useActionState(submitEnquiry, initialEnquiryState);
+}: EnquiryFormProps) {
+  const [state, setState] = useState<EnquiryState>(initialEnquiryState);
   const formRef = useRef<HTMLFormElement>(null);
-  const successRef = useRef<HTMLDivElement>(null);
   const uid = useId();
   const id = (f: string) => `${uid}-${f}`;
   const err = (f: EnquiryField) => state.errors?.[f];
 
   useEffect(() => {
     if (state.status === "error") formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
-    if (state.status === "success") successRef.current?.focus();
   }, [state]);
 
-  if (state.status === "success") {
-    return (
-      <div ref={successRef} tabIndex={-1} role="status" className="rounded-sm border border-leaf-500/30 bg-leaf-50 p-8 outline-none sm:p-10">
-        <span className="flex size-12 items-center justify-center rounded-full bg-leaf-600 text-white">
-          <Icon name="check" className="size-6" strokeWidth={2} />
-        </span>
-        <h3 className="mt-6 font-display text-2xl font-semibold text-ink-950">Enquiry received</h3>
-        <p className="mt-3 max-w-lg leading-relaxed text-ink-600">{state.message}</p>
-        <button type="button" onClick={onReset} className="mt-6 text-sm font-semibold text-gold-700 hover:text-gold-800">
-          Send another enquiry
-        </button>
-      </div>
-    );
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const get = (key: string) => String(data.get(key) ?? "").trim();
+    if (get("website")) return;
+    const errors: Partial<Record<EnquiryField, string>> = {};
+    if (get("name").length < 2 || get("name").length > 120) errors.name = "Please enter your full name (2–120 characters).";
+    if (get("organisation").length > 160) errors.organisation = "Please shorten the organisation name.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(get("email")) || get("email").length > 200) errors.email = "Please enter a valid email address.";
+    if (get("phone") && !/^[+()\d\s-]{7,20}$/.test(get("phone"))) errors.phone = "Please enter a valid phone number.";
+    if (!(ENQUIRY_TYPES as readonly string[]).includes(get("enquiryType"))) errors.enquiryType = "Please choose an enquiry type.";
+    if (get("message").length < 10 || get("message").length > MESSAGE_MAX) errors.message = `Please enter between 10 and ${MESSAGE_MAX} characters.`;
+    if (data.get("consent") !== "on") errors.consent = "Please confirm so that we can respond to your enquiry.";
+    if (Object.keys(errors).length) {
+      setState({ status: "error", message: "Please correct the highlighted fields and try again.", errors });
+      return;
+    }
+    const number = contact.phone?.replace(/\D/g, "");
+    if (!number) {
+      setState({ status: "error", message: "WhatsApp is unavailable. Please contact us by email.", values: {
+        name: get("name"), organisation: get("organisation"), email: get("email"),
+        phone: get("phone"), enquiryType: get("enquiryType"), message: get("message"),
+      } });
+      return;
+    }
+    const message = [
+      "*New enquiry | Raghav Buildcon*",
+      "",
+      `*Full name:* ${get("name")}`,
+      `*Organisation:* ${get("organisation") || "Not provided"}`,
+      `*Email:* ${get("email")}`,
+      `*Phone:* ${get("phone") || "Not provided"}`,
+      `*Enquiry type:* ${get("enquiryType")}`,
+      "",
+      "*Message:*",
+      get("message"),
+      "",
+      "Consent given to respond to this enquiry.",
+    ].join("\n");
+    setState(initialEnquiryState);
+    window.location.assign(`https://wa.me/${number}?text=${encodeURIComponent(message)}`);
   }
 
   const v = state.values ?? {};
 
   return (
-    <form ref={formRef} action={formAction} noValidate className="space-y-6" aria-describedby={state.message ? id("status") : undefined}>
+    <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-6" aria-describedby={state.message ? id("status") : undefined}>
       {state.status === "error" && state.message ? (
-        <p id={id("status")} role="alert" className="flex items-start gap-3 rounded-sm border border-red-700/20 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div id={id("status")} role="alert" className="flex items-start gap-3 rounded-sm border border-red-700/20 bg-red-50 px-4 py-3 text-sm text-red-800">
           <Icon name="info" className="mt-0.5 size-4 shrink-0" />
-          {state.message}
-        </p>
+          <div>
+            <p>{state.message}</p>
+            {!state.errors && contact.email ? (
+              <a
+                href={`mailto:${contact.email}?subject=${encodeURIComponent(v.enquiryType ?? defaultType)}&body=${encodeURIComponent(`${v.message ?? ""}\n\nName: ${v.name ?? ""}\nOrganisation: ${v.organisation ?? ""}\nEmail: ${v.email ?? ""}\nPhone: ${v.phone ?? ""}`)}`}
+                className="mt-2 inline-block font-semibold underline underline-offset-4"
+              >
+                Open your email app with this enquiry
+              </a>
+            ) : null}
+          </div>
+        </div>
       ) : null}
 
       <div className="grid gap-6 sm:grid-cols-2">
@@ -122,16 +153,14 @@ function EnquiryFormInner({
         ) : null}
       </div>
 
-      <Button type="submit" size="lg" icon={pending ? null : "arrow-right"} disabled={pending} className="w-full sm:w-auto">
-        {pending ? (
-          <span className="inline-flex items-center gap-2.5">
-            <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-ink-950/30 border-t-ink-950" />
-            Sending…
-          </span>
-        ) : (
-          submitLabel
-        )}
-      </Button>
+      <div>
+        <Button type="submit" size="lg" icon="arrow-right" className="w-full sm:w-auto">
+          {submitLabel}
+        </Button>
+        <p className="mt-3 text-sm leading-relaxed text-ink-500">
+          Opens WhatsApp with your enquiry ready for {contact.phone}. Tap Send in WhatsApp to submit it.
+        </p>
+      </div>
     </form>
   );
 }

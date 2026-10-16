@@ -13,7 +13,7 @@ import { Icon } from "@/components/ui/Icon";
 import { OrPending } from "@/components/ui/Placeholder";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { company, stats } from "@/content/company";
+import { company, proprietor, stats } from "@/content/company";
 import { news } from "@/content/news";
 import { getProject } from "@/content/projects";
 import { verticals } from "@/content/verticals";
@@ -146,7 +146,7 @@ export default function HomePage() {
                 {[
                   { label: "Founded", value: company.founded },
                   { label: "Headquarters", value: company.headquarters },
-                  { label: "Operating regions", value: company.operatingRegions },
+                  { label: "Proprietor", value: proprietor.name },
                 ].map((f) => (
                   <div key={f.label} className="bg-white p-5">
                     <dt className="text-xs font-bold uppercase tracking-[0.16em] text-ink-400">{f.label}</dt>

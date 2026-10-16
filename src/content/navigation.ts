@@ -17,7 +17,14 @@ export type NavItem = NavLink & {
 
 export const mainNav: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
+  {
+    label: "About",
+    href: "/about",
+    children: [
+      { label: "About Us", href: "/about", description: "Discover Raghav Buildcon and our values.", icon: "building" },
+      { label: "About Proprietor", href: "/about/proprietor", description: "Meet Mr. Sagar Wale, our proprietor.", icon: "users" },
+    ],
+  },
   {
     label: "Expertise",
     href: "/expertise",
@@ -49,6 +56,7 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
     title: "Company",
     links: [
       { label: "About Raghav Buildcon", href: "/about" },
+      { label: "About Proprietor", href: "/about/proprietor" },
       { label: "Careers", href: "/careers" },
       { label: "News & updates", href: "/news" },
       { label: "Contact", href: "/contact" },
