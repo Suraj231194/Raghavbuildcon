@@ -13,7 +13,7 @@ export type Commitment = {
   image: string;
 };
 
-/** Line drawings that draw themselves as the cards scroll in (24 × 24 grid). */
+/** Line drawings that draw themselves as the cards come into view (24 × 24 grid). */
 const EMBLEMS: Record<Commitment["emblem"], string[]> = {
   // A drafting compass over a dimension line.
   engineering: ["M12 2.5v2.2", "M12 6.2 6.4 20.5", "M12 6.2l5.6 14.3", "M7.6 17a6.2 6.2 0 0 0 8.8 0", "M3 22.5h18", "M3 21.5v2", "M21 21.5v2"],

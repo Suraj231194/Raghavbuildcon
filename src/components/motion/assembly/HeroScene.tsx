@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { assemblyStages, type AssemblyId } from "@/content/assembly";
+import { AUTOPLAY, STAGE_SECONDS } from "@/lib/motion";
 import { mountAssembly } from "./mount";
 
 /** The hero background (ink-950). */
@@ -12,13 +13,14 @@ const BACKDROP = "#070b14";
 type HeroSceneProps = {
   /** The model behind the hero; the home page uses the township. */
   model?: AssemblyId;
-  /** How far the model builds itself on arrival; scrolling the hero away builds the rest. */
+  /** "scroll" mode: how far the model builds itself on arrival; scrolling the hero away builds the rest. */
   intro?: number;
 };
 
 /**
- * A 3D model behind a page hero. It builds itself as the page opens, keeps building — and the
- * camera moves — as the hero scrolls away, and on a mouse the camera leans towards the pointer.
+ * A 3D model behind a page hero. It builds itself as the page opens — all the way in "auto" mode
+ * (lib/motion.ts); in "scroll" mode it keeps building, and the camera moves, as the hero scrolls
+ * away — and on a mouse the camera leans towards the pointer.
  *
  * It sits behind the hero text, under the hero's own gradients, and fades in over the hero photo
  * once it has drawn; the photo stays as the first paint and as the fallback without WebGL. The
@@ -38,13 +40,16 @@ export function HeroScene({ model = "township", intro = 0.62 }: HeroSceneProps) 
 
     const desktop = window.matchMedia("(min-width: 1024px)");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const state = { intro: reduce ? intro : 0, scroll: 0 };
+    const stages = assemblyStages[model].length;
+    // How far the opening build goes: all the way when it plays by itself.
+    const opening = AUTOPLAY ? 1 : intro;
+    const state = { intro: reduce ? opening : 0, scroll: 0 };
     const orbit = { yaw: 0, pitch: 0 };
     let introPlayed = reduce;
 
-    const apply = () => view.setProgress(reduce ? 1 : Math.min(1, state.intro + state.scroll * (1 - intro)));
+    const apply = () => view.setProgress(reduce ? 1 : Math.min(1, state.intro + state.scroll * (1 - opening)));
     const view = mountAssembly(host, hero, model, {
-      stages: assemblyStages[model].length,
+      stages,
       backdrop: BACKDROP,
       ghosts: desktop.matches,
       // Wide scenes are framed for wide views; single structures are framed for cards and need room.
@@ -59,7 +64,13 @@ export function HeroScene({ model = "township", intro = 0.62 }: HeroSceneProps) 
         root.dataset.ready = "";
         if (introPlayed) return;
         introPlayed = true;
-        gsap.to(state, { intro, duration: 3.6, ease: "power2.inOut", delay: 0.3, onUpdate: apply });
+        gsap.to(state, {
+          intro: opening,
+          duration: AUTOPLAY ? stages * STAGE_SECONDS.hero : 3.6,
+          ease: AUTOPLAY ? "power1.inOut" : "power2.inOut",
+          delay: 0.3,
+          onUpdate: apply,
+        });
       },
     });
     // Right of the headline on desktop; on phones the model sits dimmed behind the text.
@@ -79,11 +90,13 @@ export function HeroScene({ model = "township", intro = 0.62 }: HeroSceneProps) 
     // gsap.matchMedia skips the callback when no condition matches, so both preferences are listed.
     mm.add({ reduce: "(prefers-reduced-motion: reduce)", motion: "(prefers-reduced-motion: no-preference)" }, (context) => {
       if (context.conditions?.reduce) return;
-      gsap.fromTo(
-        state,
-        { scroll: 0 },
-        { scroll: 1, ease: "none", onUpdate: apply, scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.8 } },
-      );
+      if (!AUTOPLAY) {
+        gsap.fromTo(
+          state,
+          { scroll: 0 },
+          { scroll: 1, ease: "none", onUpdate: apply, scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.8 } },
+        );
+      }
       if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
       window.addEventListener("pointermove", onMove, { passive: true });
       return () => window.removeEventListener("pointermove", onMove);

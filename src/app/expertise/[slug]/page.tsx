@@ -80,7 +80,7 @@ export default async function VerticalPage({ params }: Props) {
         </Container>
       </section>
 
-      {/* The vertical's build sequence, assembled as the reader scrolls */}
+      {/* The vertical's build sequence, assembled stage by stage */}
       <AssemblyStory model={assembly.model} id="build-sequence" eyebrow="How it comes together" title={assembly.title} lead={assembly.lead} />
 
       {/* Capabilities */}

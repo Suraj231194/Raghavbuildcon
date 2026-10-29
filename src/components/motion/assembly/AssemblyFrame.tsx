@@ -3,9 +3,12 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
+import { Icon } from "@/components/ui/Icon";
 import { assemblyStages, type AssemblyId } from "@/content/assembly";
 import { activeStage } from "@/lib/assembly-timing";
+import { AUTOPLAY, STAGE_SECONDS } from "@/lib/motion";
 import { cn } from "@/lib/site";
+import { driveProgress, type Drive } from "./drive";
 import { mountAssembly } from "./mount";
 
 type AssemblyFrameProps = {
@@ -17,16 +20,18 @@ type AssemblyFrameProps = {
   tone?: "light" | "dark";
   /** Blueprint outlines for parts still to arrive; heavy scenes keep them to desktops. */
   ghosts?: boolean | "desktop";
-  /** Where the build starts and finishes, as ScrollTrigger positions of the frame. */
+  /** "scroll" mode: where the build starts and finishes, as ScrollTrigger positions of the frame. */
   start?: string;
   end?: string;
   className?: string;
 };
 
 /**
- * A framed 3D model that assembles itself while the frame scrolls through the screen. Nothing is
- * pinned, so it adds no scroll length. The current stage is named in the caption, and on a mouse
- * the model turns a little towards the pointer.
+ * A framed 3D model that assembles itself in a card. Nothing is pinned, so it adds no scroll
+ * length. In "auto" mode (lib/motion.ts) the build plays while the card is on screen and the
+ * Replay button starts it again; in "scroll" mode it follows the card through the screen. The
+ * current stage is named in the caption, and on a mouse the model turns a little towards the
+ * pointer.
  *
  * The 3D view is created near the screen and released far from it (mount.ts), so a page with
  * several frames keeps only the nearby ones alive. With reduced motion the finished model is shown.
@@ -45,7 +50,9 @@ export function AssemblyFrame({ model, label, backdrop, tone = "light", ghosts =
     gsap.registerPlugin(ScrollTrigger);
 
     const titles = Array.from(frame.querySelectorAll<HTMLElement>("[data-frame-stage]"));
+    const replay = frame.querySelector<HTMLButtonElement>("[data-replay]");
     let current = 0;
+    let drive: Drive | null = null;
     const orbit = { yaw: 0, pitch: 0 };
     const view = mountAssembly(host, frame, model, {
       stages: stages.length,
@@ -67,6 +74,7 @@ export function AssemblyFrame({ model, label, backdrop, tone = "light", ghosts =
       current = active;
       titles.forEach((t, i) => (t.dataset.active = String(i === active)));
     };
+    const onReplay = () => drive?.replay();
 
     const turn = () => view.setOrbit(orbit.yaw, orbit.pitch);
     const toYaw = gsap.quickTo(orbit, "yaw", { duration: 0.9, ease: "power3.out", onUpdate: turn });
@@ -88,23 +96,27 @@ export function AssemblyFrame({ model, label, backdrop, tone = "light", ghosts =
         show(1);
         return;
       }
-      const state = { p: 0 };
-      gsap.fromTo(
-        state,
-        { p: 0 },
-        {
-          p: 1,
-          ease: "none",
-          onUpdate: () => show(state.p),
-          scrollTrigger: { trigger: frame, start, end, scrub: 0.7 },
-        },
-      );
-      if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-      frame.addEventListener("pointermove", onMove);
-      frame.addEventListener("pointerleave", onLeave);
+      drive = driveProgress({
+        trigger: frame,
+        onUpdate: show,
+        seconds: stages.length * STAGE_SECONDS.frame,
+        start: "top 80%",
+        end: "bottom 20%",
+        scroll: { start, end, scrub: 0.7 },
+      });
+      replay?.addEventListener("click", onReplay);
+      const pointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      if (pointer) {
+        frame.addEventListener("pointermove", onMove);
+        frame.addEventListener("pointerleave", onLeave);
+      }
       return () => {
-        frame.removeEventListener("pointermove", onMove);
-        frame.removeEventListener("pointerleave", onLeave);
+        replay?.removeEventListener("click", onReplay);
+        drive = null;
+        if (pointer) {
+          frame.removeEventListener("pointermove", onMove);
+          frame.removeEventListener("pointerleave", onLeave);
+        }
       };
     });
 
@@ -120,6 +132,19 @@ export function AssemblyFrame({ model, label, backdrop, tone = "light", ghosts =
   return (
     <figure ref={rootRef} className={cn("group/frame relative isolate overflow-hidden rounded-sm", className)} style={{ backgroundColor: backdrop }}>
       <div ref={hostRef} aria-hidden="true" className="absolute inset-0 opacity-0 transition-opacity duration-1000 group-data-[ready]/frame:opacity-100" />
+      {AUTOPLAY ? (
+        <button
+          type="button"
+          data-replay=""
+          aria-label="Replay the build"
+          className={cn(
+            "absolute top-3 left-3 inline-flex size-7 items-center justify-center rounded-sm transition-colors duration-300 still:hidden",
+            tone === "light" ? "bg-white/75 text-ink-600 hover:text-ink-950" : "bg-ink-950/60 text-ink-300 hover:text-white",
+          )}
+        >
+          <Icon name="replay" className="size-3.5" />
+        </button>
+      ) : null}
       <span
         className={cn(
           "absolute top-3 right-3 rounded-sm px-2 py-0.5 text-[0.62rem] font-bold tracking-[0.16em] uppercase",

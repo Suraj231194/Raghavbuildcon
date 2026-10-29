@@ -3,7 +3,7 @@ import { cn } from "@/lib/site";
 
 export type Feature = { title: string; description: string; icon: IconName };
 
-/** Icon + title + text cards. The cards assemble into the grid and their icons draw themselves as they scroll in. */
+/** Icon + title + text cards. The cards assemble into the grid and their icons draw themselves as they come into view. */
 export function FeatureGrid({
   features,
   tone = "dark",

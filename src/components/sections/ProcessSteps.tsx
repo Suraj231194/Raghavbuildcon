@@ -3,7 +3,7 @@ import { cn } from "@/lib/site";
 
 type Step = { title: string; description: string };
 
-/** Numbered lifecycle, laid out as a connected sequence; a gold line fills across each step in turn as it scrolls in. */
+/** Numbered lifecycle, laid out as a connected sequence; a gold line fills across each step in turn as it comes into view. */
 export function ProcessSteps({ steps, tone = "dark" }: { steps: Step[]; tone?: "dark" | "light" }) {
   const light = tone === "light";
   return (

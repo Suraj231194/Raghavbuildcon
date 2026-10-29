@@ -122,13 +122,13 @@ export default function HomePage() {
         </nav>
       </section>
 
-      {/* A bridge assembling itself as the reader scrolls */}
+      {/* A bridge assembling itself, stage by stage */}
       <AssemblyStory
         model="bridge"
         id="build-story"
         eyebrow="From the ground up"
         title="Watch a bridge come together."
-        lead="Foundations, piers, girders and deck: the stages of a bridge build, assembled as you scroll."
+        lead="Foundations, piers, girders and deck: the stages of a bridge build, assembled one by one."
         length={2.4}
       />
 
@@ -181,13 +181,13 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* What we build: three structures assembling as they scroll past */}
+      {/* What we build: three structures assembling themselves */}
       <section aria-labelledby="build-title" className="bg-sand-50 py-24 sm:py-32">
         <Container>
           <SectionHeading
             eyebrow="What we build"
             title={<span id="build-title">Homes, buildings and structures, piece by piece.</span>}
-            lead="Scroll to watch each one come together, from the first peg in the ground to handover."
+            lead="Watch each one come together, from the first peg in the ground to handover."
           />
           <ul className="mt-14 grid gap-12 md:grid-cols-3 md:gap-6">
             {showcase.map((item) => (

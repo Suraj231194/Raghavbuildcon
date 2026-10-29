@@ -10,19 +10,23 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Icon } from "@/components/ui/Icon";
 import { assemblyStages, verticalAssembly } from "@/content/assembly";
 import type { Vertical } from "@/content/types";
-import { buildProgress } from "@/lib/assembly-timing";
+import { buildProgress, progressFor } from "@/lib/assembly-timing";
+import { AUTOPLAY, STAGE_SECONDS } from "@/lib/motion";
+import { driveProgress, type Drive } from "./drive";
 import { mountAssembly } from "./mount";
 
 /** Matches STAGES_PER_VERTICAL in models-world.ts: seven build stages, then one to travel on. */
 const PER = 8;
-/** Pinned scroll per vertical, in screen heights (phones use a little less). */
+/** "scroll" mode: pinned scroll per vertical, in screen heights (phones use a little less). */
 const SCREENS_EACH = 0.85;
 
 /**
- * The four business verticals as one pinned presentation. A single 3D world holds a road, a
- * bridge, a building and a pipeline on one landscape: the camera follows each build, then flies on
- * to the next site, while the panel beside it changes to that vertical. The tabs jump to a
- * vertical. With reduced motion, or without WebGL, the four are listed in full with the finished
+ * The four business verticals as one presentation. A single 3D world holds a road, a bridge, a
+ * building and a pipeline on one landscape: the camera follows each build, then flies on to the
+ * next site, while the panel beside it changes to that vertical. The tabs jump to a vertical. In
+ * "auto" mode (lib/motion.ts) the tour plays by itself while the section is on screen and the
+ * Replay button starts it again; in "scroll" mode the section pins and the tour follows the
+ * scroll. With reduced motion, or without WebGL, the four are listed in full with the finished
  * world beside them.
  */
 export function VerticalsShowcase({ verticals }: { verticals: Vertical[] }) {
@@ -45,13 +49,14 @@ export function VerticalsShowcase({ verticals }: { verticals: Vertical[] }) {
     const panels = Array.from(section.querySelectorAll<HTMLElement>("[data-vertical-panel]"));
     const text = section.querySelector<HTMLElement>("[data-verticals-text]");
     const head = section.querySelector<HTMLElement>("[data-verticals-head]");
+    const replay = section.querySelector<HTMLButtonElement>("[data-replay]");
     const desktop = window.matchMedia("(min-width: 1024px)");
     // Landscape phones use the desktop layout: text beside the world.
     const shortQuery = window.matchMedia("(max-height: 520px) and (orientation: landscape)");
     const count = verticals.length;
     let active = -1;
     let stageShown = -1;
-    let trigger: ScrollTrigger | null = null;
+    let drive: Drive | null = null;
 
     const view = mountAssembly(host, section, "verticals", {
       stages: count * PER,
@@ -108,13 +113,14 @@ export function VerticalsShowcase({ verticals }: { verticals: Vertical[] }) {
       }
     };
 
-    // A tab scrolls to the middle of its vertical's build.
+    // A tab jumps to its vertical: the start of its build when playing by itself, the middle of it
+    // when the scroll drives the tour.
     const jump = (event: Event) => {
       const i = tabs.indexOf(event.currentTarget as HTMLElement);
-      if (!trigger || i < 0) return;
-      const p = ((i * PER + 4) / (count * PER)) * 0.92;
-      window.scrollTo({ top: trigger.start + p * (trigger.end - trigger.start), behavior: "smooth" });
+      if (!drive || i < 0) return;
+      drive.seek(progressFor((i * PER + (AUTOPLAY ? 0.05 : 4)) / (count * PER)));
     };
+    const onReplay = () => drive?.replay();
 
     const mm = gsap.matchMedia();
     // gsap.matchMedia skips the callback when no condition matches, so both preferences are listed.
@@ -126,31 +132,28 @@ export function VerticalsShowcase({ verticals }: { verticals: Vertical[] }) {
         return () => delete section.dataset.mode;
       }
       section.dataset.mode = "live";
-      const state = { p: 0 };
-      const tween = gsap.fromTo(
-        state,
-        { p: 0 },
-        {
-          p: 1,
-          ease: "none",
-          onUpdate: () => show(state.p),
-          scrollTrigger: {
-            trigger: pinned,
-            start: "top top",
-            end: () => `+=${window.innerHeight * count * SCREENS_EACH * (wide ? 1 : 0.8)}`,
-            pin: true,
-            anticipatePin: 1,
-            scrub: 0.9,
-            invalidateOnRefresh: true,
-          },
+      drive = driveProgress({
+        trigger: pinned,
+        onUpdate: show,
+        seconds: count * PER * STAGE_SECONDS.world,
+        start: "top 70%",
+        end: "bottom 30%",
+        scroll: {
+          start: "top top",
+          end: () => `+=${window.innerHeight * count * SCREENS_EACH * (wide ? 1 : 0.8)}`,
+          pin: true,
+          anticipatePin: 1,
+          scrub: 0.9,
+          invalidateOnRefresh: true,
         },
-      );
-      trigger = tween.scrollTrigger ?? null;
+      });
       tabs.forEach((t) => t.addEventListener("click", jump));
+      replay?.addEventListener("click", onReplay);
       requestAnimationFrame(frame);
       return () => {
         tabs.forEach((t) => t.removeEventListener("click", jump));
-        trigger = null;
+        replay?.removeEventListener("click", onReplay);
+        drive = null;
         delete section.dataset.mode;
         active = -1;
         stageShown = -1;
@@ -247,7 +250,20 @@ export function VerticalsShowcase({ verticals }: { verticals: Vertical[] }) {
             <ButtonLink href="/expertise" variant="outline-light">
               All expertise
             </ButtonLink>
-            <span className="rounded-sm bg-ink-950/60 px-2 py-0.5 text-[0.62rem] font-bold tracking-[0.18em] text-ink-300 uppercase">Illustrative models</span>
+            <div className="flex items-center gap-2">
+              {AUTOPLAY ? (
+                <button
+                  type="button"
+                  data-replay=""
+                  aria-label="Replay the tour of the four verticals"
+                  className="inline-flex items-center gap-1.5 rounded-sm bg-ink-950/60 px-2.5 py-1 text-[0.62rem] font-bold tracking-[0.18em] text-ink-300 uppercase transition-colors duration-300 hover:text-white still:hidden"
+                >
+                  <Icon name="replay" className="size-3" />
+                  Replay
+                </button>
+              ) : null}
+              <span className="rounded-sm bg-ink-950/60 px-2 py-0.5 text-[0.62rem] font-bold tracking-[0.18em] text-ink-300 uppercase">Illustrative models</span>
+            </div>
           </div>
         </Container>
 

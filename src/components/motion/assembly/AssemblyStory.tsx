@@ -5,8 +5,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef, type ReactNode } from "react";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import { Icon } from "@/components/ui/Icon";
 import { assemblyStages, type AssemblyId } from "@/content/assembly";
 import { activeStage } from "@/lib/assembly-timing";
+import { AUTOPLAY, STAGE_SECONDS } from "@/lib/motion";
+import { driveProgress, type Drive } from "./drive";
 import { mountAssembly } from "./mount";
 
 type AssemblyStoryProps = {
@@ -16,17 +19,20 @@ type AssemblyStoryProps = {
   eyebrow: string;
   title: ReactNode;
   lead: ReactNode;
-  /** How long the section stays pinned on desktop, in screen heights. Phones use a little less. */
+  /** "scroll" mode: how long the section stays pinned on desktop, in screen heights. Phones use a little less. */
   length?: number;
 };
 
 /**
- * A pinned section in which a 3D model assembles itself, stage by stage, as the reader scrolls,
- * with the stage being built highlighted in the list beside it.
+ * A full-screen section in which a 3D model assembles itself, stage by stage, with the stage being
+ * built highlighted in the list beside it. In "auto" mode (lib/motion.ts) the build plays by itself
+ * once the section is on screen, pausing while it is not, and the Replay button builds it again;
+ * in "scroll" mode the section pins and the build follows the scroll.
  *
  * The stage list is ordinary server-rendered text. The 3D view is created near the screen and
- * released far from it (mount.ts); the canvas fades in once it has drawn. With reduced motion, or without WebGL, the
- * section is not pinned: it shows every stage, and the finished model when it can be drawn.
+ * released far from it (mount.ts); the canvas fades in once it has drawn. With reduced motion, or
+ * without WebGL, the section is static: it shows every stage, and the finished model when it can
+ * be drawn.
  */
 export function AssemblyStory({ model, id, eyebrow, title, lead, length = 2 }: AssemblyStoryProps) {
   const stages = assemblyStages[model];
@@ -46,10 +52,12 @@ export function AssemblyStory({ model, id, eyebrow, title, lead, length = 2 }: A
     const items = Array.from(section.querySelectorAll<HTMLElement>("[data-stage]"));
     const text = section.querySelector<HTMLElement>("[data-assembly-text]");
     const head = section.querySelector<HTMLElement>("[data-assembly-head]");
+    const replay = section.querySelector<HTMLButtonElement>("[data-replay]");
     const desktopQuery = window.matchMedia("(min-width: 1024px)");
     // Landscape phones use the desktop layout: text beside the model.
     const shortQuery = window.matchMedia("(max-height: 520px) and (orientation: landscape)");
     let current = -1;
+    let drive: Drive | null = null;
     const view = mountAssembly(host, section, model, {
       stages: stages.length,
       margin: "150% 0px",
@@ -95,6 +103,7 @@ export function AssemblyStory({ model, id, eyebrow, title, lead, length = 2 }: A
         view.setShift(0, 0);
       }
     };
+    const onReplay = () => drive?.replay();
 
     const mm = gsap.matchMedia();
     // gsap.matchMedia skips the callback when no condition matches, so both motion preferences are
@@ -108,34 +117,31 @@ export function AssemblyStory({ model, id, eyebrow, title, lead, length = 2 }: A
       }
       section.dataset.mode = "live";
       const pinLength = () => window.innerHeight * (desktop ? length : length * 0.8);
-      ScrollTrigger.create({
+      // "scroll" mode pins the stage while the model builds. The build starts as the section
+      // scrolls in, so the blueprint is drawing by the time it pins.
+      if (!AUTOPLAY) {
+        ScrollTrigger.create({
+          trigger: pinned,
+          start: "top top",
+          end: () => `+=${pinLength()}`,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        });
+      }
+      drive = driveProgress({
         trigger: pinned,
-        start: "top top",
-        end: () => `+=${pinLength()}`,
-        pin: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
+        onUpdate: show,
+        seconds: stages.length * STAGE_SECONDS.story,
+        start: "top 70%",
+        end: "bottom 30%",
+        scroll: { start: "top 70%", end: () => `+=${window.innerHeight * 0.7 + pinLength()}`, scrub: 0.8, invalidateOnRefresh: true },
       });
-      // The build starts as the section scrolls in, so the blueprint is drawing by the time it pins.
-      const state = { p: 0 };
-      gsap.fromTo(
-        state,
-        { p: 0 },
-        {
-          p: 1,
-          ease: "none",
-          onUpdate: () => show(state.p),
-          scrollTrigger: {
-            trigger: pinned,
-            start: "top 70%",
-            end: () => `+=${window.innerHeight * 0.7 + pinLength()}`,
-            scrub: 0.8,
-            invalidateOnRefresh: true,
-          },
-        },
-      );
+      replay?.addEventListener("click", onReplay);
       requestAnimationFrame(frame);
       return () => {
+        replay?.removeEventListener("click", onReplay);
+        drive = null;
         delete section.dataset.mode;
         current = -1;
       };
@@ -217,9 +223,22 @@ export function AssemblyStory({ model, id, eyebrow, title, lead, length = 2 }: A
           </div>
         </Container>
 
-        <p className="absolute right-5 bottom-2 rounded-sm bg-ink-950/60 px-2 py-0.5 text-[0.62rem] font-bold tracking-[0.18em] text-ink-300 uppercase backdrop-blur-sm sm:right-8 lg:right-12 lg:bottom-6 lg:py-1 lg:text-[0.68rem] still:static still:px-5 still:pb-6 still:text-right still:max-lg:order-last still:lg:absolute">
-          Illustrative model
-        </p>
+        <div className="absolute right-5 bottom-2 flex items-center justify-end gap-2 sm:right-8 lg:right-12 lg:bottom-6 still:static still:px-5 still:pb-6 still:max-lg:order-last still:lg:absolute">
+          {AUTOPLAY ? (
+            <button
+              type="button"
+              data-replay=""
+              aria-label="Replay the build sequence"
+              className="inline-flex items-center gap-1.5 rounded-sm bg-ink-950/60 px-2.5 py-1 text-[0.62rem] font-bold tracking-[0.18em] text-ink-300 uppercase backdrop-blur-sm transition-colors duration-300 hover:text-white lg:text-[0.68rem] still:hidden"
+            >
+              <Icon name="replay" className="size-3" />
+              Replay
+            </button>
+          ) : null}
+          <p className="rounded-sm bg-ink-950/60 px-2 py-0.5 text-[0.62rem] font-bold tracking-[0.18em] text-ink-300 uppercase backdrop-blur-sm lg:py-1 lg:text-[0.68rem]">
+            Illustrative model
+          </p>
+        </div>
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-0.5 bg-white/10 still:hidden">
           <div ref={barRef} className="h-full origin-left bg-gold-500" style={{ transform: "scaleX(0)" }} />
         </div>

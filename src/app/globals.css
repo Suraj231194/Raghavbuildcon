@@ -71,8 +71,8 @@
 }
 
 /*
- * "still:" styles a scroll-driven 3D section (AssemblyStory) when it is not pinned: under reduced
- * motion, or when it has fallen back to its static layout (no WebGL).
+ * "still:" styles a 3D section (AssemblyStory, VerticalsShowcase) when it is not animated: under
+ * reduced motion, or when it has fallen back to its static layout (no WebGL).
  */
 @custom-variant still {
   @media (prefers-reduced-motion: reduce) {
@@ -84,8 +84,8 @@
 }
 
 /*
- * "short:" is a landscape phone: wide but under 520px tall. The pinned 3D sections then lay their
- * text in a narrow column beside the model, as on desktop, instead of stacking it.
+ * "short:" is a landscape phone: wide but under 520px tall. The full-screen 3D sections then lay
+ * their text in a narrow column beside the model, as on desktop, instead of stacking it.
  */
 @custom-variant short {
   @media (max-height: 520px) and (orientation: landscape) {

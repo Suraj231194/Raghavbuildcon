@@ -43,6 +43,7 @@ const paths = {
   award: "M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM8.5 14 7 21l5-2.5 5 2.5-1.5-7",
   truck: "M2.5 6h11v10h-11zM13.5 9.5h4l3 3.5V16h-7M7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z",
   recycle: "M7 19H4.5l3.5-6M17 19h2.5L16 13M12 4l-2 3.5M12 4l2 3.5M8 13l-2.2-3.6M16 13l2.2-3.6M9.5 19h5",
+  replay: "M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8M21 3v5h-5",
 } as const;
 
 export type IconName = keyof typeof paths;

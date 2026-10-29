@@ -23,7 +23,7 @@ function Meta({ post, tone }: { post: NewsPost; tone: "dark" | "light" }) {
 
 /**
  * News laid out as an editorial spread: the latest update as a large story whose photograph opens
- * as it scrolls in, the others as a list that assembles beside it, and a slow ticker of the
+ * as it comes into view, the others as a list that assembles beside it, and a slow ticker of the
  * categories they cover. Sample posts keep their badge.
  */
 export function NewsShowcase({ posts }: { posts: NewsPost[] }) {

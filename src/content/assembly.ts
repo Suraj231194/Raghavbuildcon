@@ -121,21 +121,21 @@ export const verticalAssembly: Record<VerticalSlug, { model: AssemblyId; title: 
   "roads-highways": {
     model: "road",
     title: "Layer by layer, a road takes shape.",
-    lead: "From the subgrade to the wearing course, each layer of a road assembled as you scroll.",
+    lead: "From the subgrade to the wearing course, each layer of a road assembled in turn.",
   },
   "bridges-structures": {
     model: "bridge",
     title: "Span by span, a bridge takes shape.",
-    lead: "Foundations, piers, girders and deck: the stages of a bridge build, assembled as you scroll.",
+    lead: "Foundations, piers, girders and deck: the stages of a bridge build, assembled one by one.",
   },
   buildings: {
     model: "building",
     title: "Floor by floor, a building takes shape.",
-    lead: "From the raft foundation to the lights coming on, the stages of a building assembled as you scroll.",
+    lead: "From the raft foundation to the lights coming on, the stages of a building assembled floor by floor.",
   },
   "epc-construction": {
     model: "pipeline",
     title: "Joint by joint, a pipeline takes shape.",
-    lead: "Excavation, bedding, laying, testing and backfill: the stages of a pipeline assembled as you scroll.",
+    lead: "Excavation, bedding, laying, testing and backfill: the stages of a pipeline assembled joint by joint.",
   },
 };
