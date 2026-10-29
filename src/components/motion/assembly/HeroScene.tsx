@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { assemblyStages, type AssemblyId } from "@/content/assembly";
-import { AUTOPLAY, STAGE_SECONDS } from "@/lib/motion";
+import { AUTOPLAY, HOLD_SECONDS, STAGE_SECONDS } from "@/lib/motion";
 import { mountAssembly } from "./mount";
 
 /** The hero background (ink-950). */
@@ -18,9 +18,9 @@ type HeroSceneProps = {
 };
 
 /**
- * A 3D model behind a page hero. It builds itself as the page opens — all the way in "auto" mode
- * (lib/motion.ts); in "scroll" mode it keeps building, and the camera moves, as the hero scrolls
- * away — and on a mouse the camera leans towards the pointer.
+ * A 3D model behind a page hero. It builds itself as the page opens — all the way, and again after
+ * a short hold, in "auto" mode (lib/motion.ts); in "scroll" mode it keeps building, and the camera
+ * moves, as the hero scrolls away — and on a mouse the camera leans towards the pointer.
  *
  * It sits behind the hero text, under the hero's own gradients, and fades in over the hero photo
  * once it has drawn; the photo stays as the first paint and as the fallback without WebGL. The
@@ -70,6 +70,7 @@ export function HeroScene({ model = "township", intro = 0.62 }: HeroSceneProps) 
           ease: AUTOPLAY ? "power1.inOut" : "power2.inOut",
           delay: 0.3,
           onUpdate: apply,
+          ...(AUTOPLAY ? { repeat: -1, repeatDelay: HOLD_SECONDS } : {}),
         });
       },
     });

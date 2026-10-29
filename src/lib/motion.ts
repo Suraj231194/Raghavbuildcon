@@ -3,10 +3,11 @@
  *
  *   "auto"    Everything plays by itself. A reveal plays once, at its own pace, as it comes into
  *             view; a 3D model builds through its stages when its section appears, pauses while
- *             the section is off screen, and holds the finished model afterwards (a Replay button
- *             builds it again); the hero model builds as the page opens; hero photos, parallax
- *             pictures and depth layers drift slowly for as long as they are on screen. Nothing
- *             is pinned and nothing follows the scroll position.
+ *             the section is off screen, and once finished holds for a moment and builds again,
+ *             for as long as it is on screen (a Replay button restarts it at once); the hero
+ *             model builds as the page opens and keeps rebuilding; hero photos, parallax pictures
+ *             and depth layers drift slowly for as long as they are on screen. Nothing is pinned
+ *             and nothing follows the scroll position.
  *   "scroll"  Everything is scrubbed by the scroll position: the 3D sections pin while their model
  *             builds, scrolling back takes it apart again, and the reveals progress as they are
  *             scrolled through.
@@ -19,6 +20,9 @@ export const MOTION_MODE = mode;
 
 /** True when the animations play by themselves rather than following the scroll. */
 export const AUTOPLAY = mode === "auto";
+
+/** Seconds a finished model is held before it builds again. */
+export const HOLD_SECONDS = 3;
 
 /** Seconds each build stage takes when a model plays by itself. */
 export const STAGE_SECONDS = {

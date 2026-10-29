@@ -1,6 +1,6 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { AUTOPLAY } from "@/lib/motion";
+import { AUTOPLAY, HOLD_SECONDS } from "@/lib/motion";
 
 export type Drive = {
   /** The 0 → 1 build tween. */
@@ -9,7 +9,7 @@ export type Drive = {
   trigger: ScrollTrigger | null;
   /** Jump to a progress: "auto" mode plays on from there, "scroll" mode scrolls there. */
   seek(p: number): void;
-  /** Build again from the start ("auto" mode). */
+  /** Build again from the start at once ("auto" mode). */
   replay(): void;
 };
 
@@ -29,7 +29,8 @@ type DriveOptions = {
  * Drives a build from 0 to 1 (lib/motion.ts decides how). In "auto" mode it plays over `seconds`
  * from the moment the trigger comes between `start` and `end`, pauses while the trigger is outside
  * them and resumes when it returns, so a model only builds while it can be seen; once finished it
- * stays finished. In "scroll" mode the scroll position scrubs it through the `scroll` range.
+ * holds for HOLD_SECONDS and builds again. In "scroll" mode the scroll position scrubs it through
+ * the `scroll` range.
  */
 export function driveProgress({ trigger, onUpdate, scroll, seconds, start = "top 75%", end = "bottom 25%" }: DriveOptions): Drive {
   gsap.registerPlugin(ScrollTrigger);
@@ -42,7 +43,7 @@ export function driveProgress({ trigger, onUpdate, scroll, seconds, start = "top
       ease: "none",
       onUpdate: () => onUpdate(state.p),
       ...(AUTOPLAY
-        ? { duration: seconds, scrollTrigger: { trigger, start, end, toggleActions: "play pause resume pause" } }
+        ? { duration: seconds, repeat: -1, repeatDelay: HOLD_SECONDS, scrollTrigger: { trigger, start, end, toggleActions: "play pause resume pause" } }
         : { scrollTrigger: { trigger, ...scroll } }),
     },
   );

@@ -28,8 +28,9 @@ type AssemblyFrameProps = {
 
 /**
  * A framed 3D model that assembles itself in a card. Nothing is pinned, so it adds no scroll
- * length. In "auto" mode (lib/motion.ts) the build plays while the card is on screen and the
- * Replay button starts it again; in "scroll" mode it follows the card through the screen. The
+ * length. In "auto" mode (lib/motion.ts) the build plays while the card is on screen, starting
+ * over after a short hold (the Replay button restarts it at once); in "scroll" mode it follows the
+ * card through the screen. The
  * current stage is named in the caption, and on a mouse the model turns a little towards the
  * pointer.
  *

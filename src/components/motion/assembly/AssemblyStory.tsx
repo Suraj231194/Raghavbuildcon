@@ -26,8 +26,9 @@ type AssemblyStoryProps = {
 /**
  * A full-screen section in which a 3D model assembles itself, stage by stage, with the stage being
  * built highlighted in the list beside it. In "auto" mode (lib/motion.ts) the build plays by itself
- * once the section is on screen, pausing while it is not, and the Replay button builds it again;
- * in "scroll" mode the section pins and the build follows the scroll.
+ * once the section is on screen, pausing while it is not, and starts over after a short hold (the
+ * Replay button restarts it at once); in "scroll" mode the section pins and the build follows the
+ * scroll.
  *
  * The stage list is ordinary server-rendered text. The 3D view is created near the screen and
  * released far from it (mount.ts); the canvas fades in once it has drawn. With reduced motion, or

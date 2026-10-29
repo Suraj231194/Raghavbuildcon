@@ -39,14 +39,14 @@ const hydrated = (el: Element) => Object.keys(el).some((key) => key.startsWith("
 export function ScrollEffects() {
   const pathname = usePathname();
 
-  // Once per visit: keep the reader's place across layout changes (only pins move it), and measure
-  // triggers in page order so a pin above a trigger is always accounted for, whichever was created
-  // first.
+  // Once per visit: keep the reader's place across layout changes (ScrollTrigger's re-measuring
+  // would jump to the top, pins or no pins), and measure triggers in page order so a pin above a
+  // trigger is always accounted for, whichever was created first.
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger, SplitText);
     const sort = () => ScrollTrigger.sort();
     ScrollTrigger.addEventListener("refreshInit", sort);
-    const release = AUTOPLAY ? () => {} : keepPlaceAcrossLayouts();
+    const release = keepPlaceAcrossLayouts();
 
     // Late layout changes (web fonts, filtered lists) move everything below them.
     let timer = 0;

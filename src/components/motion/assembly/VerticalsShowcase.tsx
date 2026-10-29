@@ -24,9 +24,9 @@ const SCREENS_EACH = 0.85;
  * The four business verticals as one presentation. A single 3D world holds a road, a bridge, a
  * building and a pipeline on one landscape: the camera follows each build, then flies on to the
  * next site, while the panel beside it changes to that vertical. The tabs jump to a vertical. In
- * "auto" mode (lib/motion.ts) the tour plays by itself while the section is on screen and the
- * Replay button starts it again; in "scroll" mode the section pins and the tour follows the
- * scroll. With reduced motion, or without WebGL, the four are listed in full with the finished
+ * "auto" mode (lib/motion.ts) the tour plays by itself while the section is on screen, starting
+ * over after a short hold (the Replay button restarts it at once); in "scroll" mode the section
+ * pins and the tour follows the scroll. With reduced motion, or without WebGL, the four are listed in full with the finished
  * world beside them.
  */
 export function VerticalsShowcase({ verticals }: { verticals: Vertical[] }) {
