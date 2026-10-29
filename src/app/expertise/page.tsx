@@ -23,6 +23,7 @@ export default function ExpertisePage() {
     <>
       <PageHero
         image={photos.aerial.src}
+        scene="network"
         breadcrumbs={[{ name: "Expertise", path: "/expertise" }]}
         eyebrow="Our expertise"
         title="Four verticals. One standard of delivery."
@@ -34,7 +35,7 @@ export default function ExpertisePage() {
           {verticals.map((v, i) => (
             <article key={v.slug} id={v.slug} className="grid scroll-mt-24 items-center gap-12 lg:grid-cols-12 lg:gap-16">
               <Reveal className={cn("relative lg:col-span-6", i % 2 === 1 && "lg:order-2")}>
-                <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-100">
+                <div data-clip="" data-parallax="5" className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-100">
                   <Image src={v.image.src} alt={v.image.alt} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
                 </div>
                 <span className="absolute -bottom-6 left-6 flex size-16 items-center justify-center rounded-sm bg-gold-500 text-ink-950 shadow-xl">

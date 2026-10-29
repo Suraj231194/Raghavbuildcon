@@ -1,9 +1,8 @@
-import { NewsCard } from "@/components/cards/NewsCard";
+import { NewsShowcase } from "@/components/sections/NewsShowcase";
 import { PageHero } from "@/components/sections/PageHero";
 import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { Pending, PlaceholderNote } from "@/components/ui/Placeholder";
-import { Reveal } from "@/components/ui/Reveal";
 import { contact } from "@/content/company";
 import { photos } from "@/content/images";
 import { news } from "@/content/news";
@@ -21,6 +20,7 @@ export default function NewsPage() {
     <>
       <PageHero
         image={photos.metro.src}
+        scene="township"
         breadcrumbs={[{ name: "News", path: "/news" }]}
         eyebrow="News & updates"
         title="News from our sites and teams."
@@ -32,13 +32,7 @@ export default function NewsPage() {
           {news.some((n) => n.sample) ? (
             <PlaceholderNote className="mb-12">Updates marked Sample content show how news will appear. They will be replaced with real announcements.</PlaceholderNote>
           ) : null}
-          <ul className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-            {posts.map((post, i) => (
-              <Reveal as="li" key={post.slug} delay={(i % 3) * 90}>
-                <NewsCard post={post} />
-              </Reveal>
-            ))}
-          </ul>
+          <NewsShowcase posts={posts} />
 
           <div className="mt-20 flex flex-col gap-4 rounded-sm bg-ink-950 p-8 text-white sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">

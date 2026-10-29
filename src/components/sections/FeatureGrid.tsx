@@ -1,10 +1,9 @@
 import { Icon, type IconName } from "@/components/ui/Icon";
-import { Reveal } from "@/components/ui/Reveal";
 import { cn } from "@/lib/site";
 
 export type Feature = { title: string; description: string; icon: IconName };
 
-/** Icon + title + text cards. */
+/** Icon + title + text cards. The cards assemble into the grid and their icons draw themselves as they scroll in. */
 export function FeatureGrid({
   features,
   tone = "dark",
@@ -18,12 +17,11 @@ export function FeatureGrid({
 }) {
   const light = tone === "light";
   return (
-    <ul className={cn("grid gap-5 sm:grid-cols-2", columns === 3 && "lg:grid-cols-3", columns === 4 && "lg:grid-cols-4")}>
+    <ul data-assemble="" className={cn("grid gap-5 sm:grid-cols-2", columns === 3 && "lg:grid-cols-3", columns === 4 && "lg:grid-cols-4")}>
       {features.map((f, i) => (
-        <Reveal
-          as="li"
+        <li
           key={f.title}
-          delay={(i % columns) * 80}
+          data-assemble-item=""
           className={cn(
             "group relative rounded-sm border p-7 transition-[border-color,background-color,box-shadow] duration-500",
             light
@@ -38,13 +36,13 @@ export function FeatureGrid({
                 light ? "bg-gold-500/10 text-gold-400 group-hover:bg-gold-500 group-hover:text-ink-950" : "bg-ink-950 text-gold-400 group-hover:bg-gold-500 group-hover:text-ink-950",
               )}
             >
-              <Icon name={f.icon} className="size-6" />
+              <Icon name={f.icon} className="size-6" data-draw="top 60%" />
             </span>
             {numbered ? <span className={cn("font-display text-sm font-semibold tracking-[0.16em]", light ? "text-ink-500" : "text-ink-300")}>{String(i + 1).padStart(2, "0")}</span> : null}
           </div>
           <h3 className={cn("mt-6 font-display text-xl font-semibold", light ? "text-white" : "text-ink-950")}>{f.title}</h3>
           <p className={cn("mt-2.5 text-[0.95rem] leading-relaxed", light ? "text-ink-300" : "text-ink-500")}>{f.description}</p>
-        </Reveal>
+        </li>
       ))}
     </ul>
   );

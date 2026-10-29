@@ -1,7 +1,6 @@
 import { Counter } from "@/components/motion/Counter";
 import { Container } from "@/components/ui/Container";
 import { PlaceholderNote } from "@/components/ui/Placeholder";
-import { Reveal } from "@/components/ui/Reveal";
 import type { Stat } from "@/content/types";
 
 /** Key figures. Stats without a verified value show a placeholder instead of a number. */
@@ -14,9 +13,9 @@ export function StatsBand({ stats, title = "Raghav Buildcon at a glance" }: { st
         <h2 id="stats-title" className="sr-only">
           {title}
         </h2>
-        <dl className="grid grid-cols-2 gap-y-10 lg:grid-cols-4">
-          {stats.map((stat, i) => (
-            <Reveal key={stat.label} delay={i * 90} className="relative flex flex-col px-4 sm:px-8 lg:border-l lg:border-white/10 lg:first:border-l-0 lg:first:pl-0">
+        <dl data-assemble="" className="grid grid-cols-2 gap-y-10 lg:grid-cols-4">
+          {stats.map((stat) => (
+            <div key={stat.label} data-assemble-item="" className="relative flex flex-col px-4 sm:px-8 lg:border-l lg:border-white/10 lg:first:border-l-0 lg:first:pl-0">
               <dt className="order-2 mt-3 text-sm font-medium tracking-wide text-ink-300">{stat.label}</dt>
               <dd className="font-display text-5xl leading-none font-semibold text-white sm:text-6xl">
                 {stat.text ? (
@@ -32,7 +31,7 @@ export function StatsBand({ stats, title = "Raghav Buildcon at a glance" }: { st
                   </span>
                 )}
               </dd>
-            </Reveal>
+            </div>
           ))}
         </dl>
         {hasPending ? (

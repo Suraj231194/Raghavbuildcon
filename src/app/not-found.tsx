@@ -20,7 +20,7 @@ export default function NotFound() {
   return (
     <section className="relative isolate flex min-h-[85svh] items-center overflow-hidden bg-ink-950 text-white">
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-blueprint" />
-      <div aria-hidden="true" className="absolute -right-10 bottom-0 -z-10 font-display text-[16rem] leading-none font-bold text-white/[0.04] sm:text-[24rem]">
+      <div aria-hidden="true" data-depth="-0.5" className="absolute -right-10 bottom-0 -z-10 font-display text-[16rem] leading-none font-bold text-white/[0.04] sm:text-[24rem]">
         404
       </div>
       <Container className="pt-36 pb-24">

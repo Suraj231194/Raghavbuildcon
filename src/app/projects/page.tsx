@@ -20,6 +20,7 @@ export default function ProjectsPage() {
     <>
       <PageHero
         image={photos.roads.src}
+        scene="network"
         breadcrumbs={[{ name: "Projects", path: "/projects" }]}
         eyebrow="Infrastructure projects"
         title="Our project portfolio."

@@ -3,6 +3,7 @@ import { Archivo, Manrope } from "next/font/google";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { RevealObserver } from "@/components/motion/RevealObserver";
+import { ScrollEffects } from "@/components/motion/ScrollEffects";
 import { company, contact } from "@/content/company";
 import { absoluteUrl, siteUrl } from "@/lib/site";
 import "./globals.css";
@@ -76,11 +77,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to main content
         </a>
         <SiteHeader />
-        <main id="main" tabIndex={-1} className="outline-none">
+        <main id="main" tabIndex={-1} className="overflow-x-clip outline-none">
           {children}
         </main>
         <SiteFooter />
         <RevealObserver />
+        <ScrollEffects />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
       </body>
     </html>

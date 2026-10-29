@@ -17,7 +17,7 @@ export function SectionHeading({ eyebrow, title, lead, tone = "dark", align = "l
   return (
     <div data-reveal="" className={cn("max-w-3xl", align === "center" && "mx-auto text-center", className)}>
       {eyebrow ? <Eyebrow tone={tone}>{eyebrow}</Eyebrow> : null}
-      <Tag className={cn("mt-5 text-3xl leading-[1.08] font-semibold sm:text-4xl lg:text-[2.85rem]", tone === "dark" ? "text-ink-950" : "text-white")}>
+      <Tag data-words="" className={cn("mt-5 text-3xl leading-[1.08] font-semibold sm:text-4xl lg:text-[2.85rem]", tone === "dark" ? "text-ink-950" : "text-white")}>
         {title}
       </Tag>
       {lead ? <p className={cn("mt-5 text-base leading-relaxed sm:text-lg", tone === "dark" ? "text-ink-500" : "text-ink-200")}>{lead}</p> : null}

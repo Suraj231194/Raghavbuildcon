@@ -25,7 +25,7 @@ export function CtaBand({
   return (
     <section className="bg-white py-20 sm:py-24">
       <Container>
-        <div data-reveal="" className="relative isolate overflow-hidden rounded-sm bg-ink-950 px-6 py-14 text-white sm:px-12 sm:py-16 lg:px-16 lg:py-20">
+        <div data-reveal="" data-parallax="4" className="relative isolate overflow-hidden rounded-sm bg-ink-950 px-6 py-14 text-white sm:px-12 sm:py-16 lg:px-16 lg:py-20">
           <Image src={image} alt="" fill sizes="(min-width: 1320px) 1220px, 100vw" className="-z-20 object-cover opacity-45" />
           <div aria-hidden="true" className="absolute inset-0 -z-10 bg-linear-to-r from-ink-950 via-ink-950/90 to-ink-950/40" />
           <div aria-hidden="true" className="absolute top-0 left-0 h-full w-1.5 bg-gold-500" />

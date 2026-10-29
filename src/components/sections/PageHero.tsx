@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { HeroScene } from "@/components/motion/assembly/HeroScene";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Icon } from "@/components/ui/Icon";
+import type { AssemblyId } from "@/content/assembly";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/site";
 
@@ -19,12 +21,14 @@ type PageHeroProps = {
   children?: ReactNode;
   size?: "md" | "lg";
   imagePosition?: string;
+  /** An illustrative 3D model that builds itself behind the title, over the photo. */
+  scene?: AssemblyId;
 };
 
-export function PageHero({ eyebrow, title, lead, image, breadcrumbs, children, size = "md", imagePosition = "center" }: PageHeroProps) {
+export function PageHero({ eyebrow, title, lead, image, breadcrumbs, children, size = "md", imagePosition = "center", scene }: PageHeroProps) {
   const trail: Crumb[] = breadcrumbs ? [{ name: "Home", path: "/" }, ...breadcrumbs] : [];
   return (
-    <section className="relative isolate overflow-hidden bg-ink-950 text-white">
+    <section data-hero="" className="relative isolate overflow-hidden bg-ink-950 text-white">
       <Image
         src={image}
         alt=""
@@ -32,14 +36,16 @@ export function PageHero({ eyebrow, title, lead, image, breadcrumbs, children, s
         loading="eager"
         fetchPriority="high"
         sizes="100vw"
+        data-hero-media=""
         className="-z-30 animate-fade-in object-cover opacity-70"
         style={{ objectPosition: imagePosition }}
       />
+      {scene ? <HeroScene model={scene} intro={0.72} /> : null}
       <div aria-hidden="true" className="absolute inset-0 -z-20 bg-linear-to-r from-ink-950 via-ink-950/85 to-ink-950/25" />
       <div aria-hidden="true" className="absolute inset-0 -z-20 bg-linear-to-t from-ink-950 via-ink-950/10 to-ink-950/60" />
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-blueprint [mask-image:linear-gradient(to_right,black,transparent_70%)]" />
 
-      <Container className={cn("relative", size === "lg" ? "pt-40 pb-24 md:pt-52 md:pb-32" : "pt-36 pb-16 md:pt-44 md:pb-24")}>
+      <Container data-hero-content="" className={cn("relative", size === "lg" ? "pt-40 pb-24 md:pt-52 md:pb-32" : "pt-36 pb-16 md:pt-44 md:pb-24")}>
         {trail.length > 0 ? (
           <>
             <nav aria-label="Breadcrumb" className="animate-fade-up">

@@ -33,6 +33,7 @@ export default async function NewsPostPage({ params }: Props) {
     <>
       <PageHero
         image={post.image.src}
+        scene="township"
         breadcrumbs={[
           { name: "News", path: "/news" },
           { name: post.title, path: `/news/${post.slug}` },

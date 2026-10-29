@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { CredentialSlots, LeadershipGrid } from "@/components/sections/Credibility";
+import { AssemblyFrame } from "@/components/motion/assembly/AssemblyFrame";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { FeatureGrid, type Feature } from "@/components/sections/FeatureGrid";
 import { PageHero } from "@/components/sections/PageHero";
@@ -32,6 +33,7 @@ export default function AboutPage() {
     <>
       <PageHero
         image={photos.engineers.src}
+        scene="township"
         breadcrumbs={[{ name: "About", path: "/about" }]}
         eyebrow="About Raghav Buildcon"
         title={company.tagline}
@@ -60,25 +62,33 @@ export default function AboutPage() {
               </ul>
             </Reveal>
           </div>
-          <Reveal delay={150} className="lg:col-span-5">
-            <dl className="divide-y divide-ink-100 rounded-sm border border-ink-100 bg-sand-50">
-              {[
-                { label: "Company name", value: company.name },
-                { label: "Proprietor", value: proprietor.name },
-                { label: "Founded", value: company.founded },
-                { label: "Headquarters", value: company.headquarters },
-                { label: "Registration / CIN", value: company.registration },
-                { label: "Operating regions", value: company.operatingRegions },
-              ].map((f) => (
-                <div key={f.label} className="flex items-center justify-between gap-6 px-6 py-4">
-                  <dt className="text-sm font-semibold text-ink-500">{f.label}</dt>
-                  <dd className="text-right font-semibold text-ink-950">
-                    <OrPending value={f.value} />
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
+          <div className="lg:col-span-5">
+            <Reveal delay={150}>
+              <dl className="divide-y divide-ink-100 rounded-sm border border-ink-100 bg-sand-50">
+                {[
+                  { label: "Company name", value: company.name },
+                  { label: "Proprietor", value: proprietor.name },
+                  { label: "Founded", value: company.founded },
+                  { label: "Headquarters", value: company.headquarters },
+                  { label: "Registration / CIN", value: company.registration },
+                  { label: "Operating regions", value: company.operatingRegions },
+                ].map((f) => (
+                  <div key={f.label} className="flex items-center justify-between gap-6 px-6 py-4">
+                    <dt className="text-sm font-semibold text-ink-500">{f.label}</dt>
+                    <dd className="text-right font-semibold text-ink-950">
+                      <OrPending value={f.value} />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+            <AssemblyFrame
+              model="tower"
+              label="Illustrative 3D model: a multi-storey building being built"
+              backdrop="#faf8f4"
+              className="mt-6 aspect-[4/5] sm:aspect-[4/3] lg:aspect-[4/5]"
+            />
+          </div>
         </Container>
       </section>
 

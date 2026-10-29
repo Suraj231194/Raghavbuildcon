@@ -46,6 +46,7 @@ export default function CareersPage() {
     <>
       <PageHero
         image={photos.team.src}
+        scene="house"
         breadcrumbs={[{ name: "Careers", path: "/careers" }]}
         eyebrow="Careers"
         title="Build a career building India’s infrastructure."
@@ -78,7 +79,7 @@ export default function CareersPage() {
               ))}
             </Reveal>
           </div>
-          <Reveal delay={120} className="relative aspect-[4/3] overflow-hidden rounded-sm lg:col-span-6">
+          <Reveal delay={120} data-clip="" className="relative aspect-[4/3] overflow-hidden rounded-sm lg:col-span-6">
             <Image src={photos.engineers.src} alt={photos.engineers.alt} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
           </Reveal>
         </Container>

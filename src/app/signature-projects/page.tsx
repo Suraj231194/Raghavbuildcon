@@ -22,6 +22,7 @@ export default function SignatureProjectsPage() {
     <>
       <PageHero
         image={photos.bridges.src}
+        scene="bridge"
         breadcrumbs={[
           { name: "Projects", path: "/projects" },
           { name: "Signature Projects", path: "/signature-projects" },
@@ -36,10 +37,10 @@ export default function SignatureProjectsPage() {
           {signatureProjects.map((p, i) => (
             <article key={p.slug} className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
               <Reveal className={cn("relative lg:col-span-7", i % 2 === 1 && "lg:order-2")}>
-                <div className="relative aspect-[16/11] overflow-hidden rounded-sm bg-ink-100">
+                <div data-clip="" data-parallax="5" className="relative aspect-[16/11] overflow-hidden rounded-sm bg-ink-100">
                   <Image src={p.image.src} alt={p.image.alt} fill sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
                 </div>
-                <span aria-hidden="true" className="absolute -top-6 font-display text-[6rem] leading-none font-bold text-gold-500/90 drop-shadow-[0_6px_20px_rgb(7_11_20/0.35)] sm:text-[8rem] lg:-left-6">
+                <span aria-hidden="true" data-depth="-0.35" className="absolute -top-6 font-display text-[6rem] leading-none font-bold text-gold-500/90 drop-shadow-[0_6px_20px_rgb(7_11_20/0.35)] sm:text-[8rem] lg:-left-6">
                   {String(i + 1).padStart(2, "0")}
                 </span>
               </Reveal>

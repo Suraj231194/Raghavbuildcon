@@ -1,6 +1,6 @@
 # Raghav Buildcon — corporate website
 
-Next.js 16 (App Router) · TypeScript · Tailwind CSS 4. Every page is statically pre-rendered.
+Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · GSAP ScrollTrigger · three.js. Every page is statically pre-rendered.
 
 ## Getting started
 
@@ -92,14 +92,32 @@ src/
     cards/        project, vertical and news cards
     forms/        enquiry form (client) → lib/actions/enquiry.ts (server action)
     layout/       header (mega menu + mobile menu), footer
-    motion/       scroll-reveal observer, counters
+    motion/       scroll-reveal observer, counters, scroll effects, 3D assembly models (assembly/)
     sections/     page hero, CTA band, stats, process, feature grid, credibility, project explorer
     ui/           container, buttons, headings, icons, placeholders
-  content/        all site content and data
-  lib/            SEO helpers, site URL, enquiry validation
+  content/        all site content and data (assembly.ts: the build stages shown with the 3D models)
+  lib/            SEO helpers, site URL, enquiry validation, scroll helpers
 ```
 
 Motion respects `prefers-reduced-motion`. Scroll-reveal content stays visible without JavaScript.
+
+## Scroll motion and 3D models
+
+- **3D build sequences** (`components/motion/assembly/`). A pinned section in which a model assembles itself as the visitor scrolls: each part travels into place (or grows out of its base) during its stage, glowing gold while it moves, and is drawn as a gold blueprint outline until it arrives. The list of stages beside it highlights the one being built. Scrolling back takes the model apart again.
+  - Home: a bridge (foundations → piers → girders → deck → finishing → traffic).
+  - Expertise pages: a road built layer by layer, the bridge, a building floor by floor, and a pipeline laid joint by joint (`verticalAssembly` in `content/assembly.ts`).
+- **3D hero** (`HeroScene.tsx`, home page). A township — a tower beside two houses on a new street — builds itself behind the headline as the page opens, keeps building while the hero scrolls away (the camera rises over it), and leans towards the mouse. It loads after the page has loaded and fades in over the hero photo, which remains the first paint and the fallback without WebGL.
+- **Framed models** (`AssemblyFrame.tsx`). A model in a card that assembles while the card scrolls through the screen, with no pinning; the caption names the current stage. Home "What we build" (a house, a multi-storey building, a box culvert — `showcase` in `content/assembly.ts`), About (the multi-storey building) and Sustainability (a portal-frame shed with rooftop solar and rainwater storage).
+- **Four verticals** (`VerticalsShowcase.tsx`, home page). One pinned section and one 3D world: a road, the bridge, a building and a pipeline on a single landscape (`verticalsWorld` in `models-world.ts`). The camera follows each build and flies on to the next site while the panel beside it changes vertical; the tabs jump to a vertical.
+- **Infrastructure network** (home "Featured projects", and the Expertise and Projects heroes). A road winds from a town of homes over a river bridge to a tower; it is paved along its length as it scrolls, each segment meeting the next at a round joint (`network` in `models-world.ts`).
+- **Inner page heroes.** `PageHero` takes `scene`: About and News (township), Expertise and Projects (network), Signature projects (bridge), Sustainability (solar shed), Safety & quality (tower), Careers and Contact (house).
+- Models: `kit.ts` (part types, a builder that places a structure at an origin and can renumber its stages, shared pieces such as pegs, vehicles and trees), `models.ts` (bridge, road, building, pipeline), `models-homes.ts` (house, tower, culvert, shed, and the hero township) and `models-world.ts` (the verticals world and the network); `catalog.ts` lists them all. Each describes the model as plain data (solids, finished positions, stages, camera path); `scene.ts` renders it with three.js, with studio reflections (RoomEnvironment), soft shadows and surface detail painted once on canvases and scaled to metres (`textures.ts`: concrete and earth grain, curtain-wall mullions, roof courses, ribbed sheeting, solar cells). `mount.ts` is the lifecycle every view shares: a canvas redraws only when the scroll position, pointer or size changes; three.js loads only when a model comes near the screen and is released when it is far away, so no more than three WebGL views are alive at once.
+  - The models are illustrations, labelled "Illustrative model" on the page; they do not depict a Raghav Buildcon project. The stage captions describe the usual sequence of each kind of work; review them with the company like the rest of the copy.
+  - With reduced motion, or on a device without WebGL, nothing is pinned or animated: every stage is listed, and the finished models are shown when they can be drawn.
+- **Scroll effects** (`components/motion/ScrollEffects.tsx`), opted into with data attributes: `data-hero` (the hero text lifts and fades and its photo drifts as it scrolls away), `data-parallax` (a photo drifts inside its frame), `data-depth` (decorative layers move at their own speed), `data-assemble` (cards fly in from spread-out 3D positions and lock into the grid), `data-tilt` (a block tips up from a 3D tilt), `data-words` (a heading brightens word by word as it is read — every `SectionHeading` has it), `data-clip` (a photo opens from a cropped window), `data-draw` (an SVG draws its strokes — `FeatureGrid` icons and the "Why" emblems), `data-fill-sequence` (gold lines fill step by step — `ProcessSteps` and the delivery rail), `data-hover-tilt` (a card tilts towards the mouse). All are scrubbed by the scroll position and are skipped with reduced motion.
+- **Home sections**: `IntroStory` (the "Who we are" statement, layered photo and facts), `WhyCommitments` (a self-drawing bridge elevation, emblem cards and the delivery lifecycle rail) and `NewsShowcase` (an editorial spread with a category ticker — also used on `/news`).
+- Screen sizes: the pinned 3D sections lay their text beside the model on desktop (`lg:`), stack it on phones and tablets, and on landscape phones (`short:`, under 520px tall) go back to the side-by-side layout so nothing is cut off. With reduced motion or without WebGL (`still:`) nothing is pinned.
+- `lib/keep-place.ts` keeps the visitor's place when the layout switches between phone and desktop (window resize, tablet rotation); without it ScrollTrigger 3.15 jumps to the top of the page.
 
 ## Note on location
 

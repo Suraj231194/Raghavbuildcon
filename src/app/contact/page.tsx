@@ -35,6 +35,7 @@ export default function ContactPage() {
     <>
       <PageHero
         image={photos.aerial.src}
+        scene="house"
         breadcrumbs={[{ name: "Contact", path: "/contact" }]}
         eyebrow="Contact us"
         title="Let’s talk about your project."
@@ -43,7 +44,7 @@ export default function ContactPage() {
 
       <section className="py-20 sm:py-24">
         <Container className="grid gap-14 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-5">
+          <div className="min-w-0 lg:col-span-5">
             <Reveal as="ul" className="space-y-px overflow-hidden rounded-sm border border-ink-100 bg-ink-100">
               {details.map((d) => (
                 <li key={d.label} className="flex items-start gap-4 bg-white p-6">
@@ -72,7 +73,7 @@ export default function ContactPage() {
             </Reveal>
           </div>
 
-          <div className="lg:col-span-7">
+          <div className="min-w-0 lg:col-span-7">
             <div className="rounded-sm border border-ink-100 bg-white p-6 shadow-[0_30px_80px_-50px_rgb(11_18_32/0.5)] sm:p-10">
               <h2 className="text-3xl font-semibold text-ink-950">Send an enquiry</h2>
               <p className="mt-3 mb-8 text-ink-500">Fields marked * are required.</p>

@@ -43,6 +43,7 @@
 
   --animate-fade-up: fade-up 0.9s var(--ease-out-expo) both;
   --animate-fade-in: fade-in 1.2s ease-out both;
+  --animate-marquee: marquee 48s linear infinite;
 
   @keyframes fade-up {
     from {
@@ -54,6 +55,11 @@
       transform: none;
     }
   }
+  @keyframes marquee {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
   @keyframes fade-in {
     from {
       opacity: 0;
@@ -61,6 +67,29 @@
     to {
       opacity: 1;
     }
+  }
+}
+
+/*
+ * "still:" styles a scroll-driven 3D section (AssemblyStory) when it is not pinned: under reduced
+ * motion, or when it has fallen back to its static layout (no WebGL).
+ */
+@custom-variant still {
+  @media (prefers-reduced-motion: reduce) {
+    @slot;
+  }
+  &:where([data-mode="static"], [data-mode="static"] *) {
+    @slot;
+  }
+}
+
+/*
+ * "short:" is a landscape phone: wide but under 520px tall. The pinned 3D sections then lay their
+ * text in a narrow column beside the model, as on desktop, instead of stacking it.
+ */
+@custom-variant short {
+  @media (max-height: 520px) and (orientation: landscape) {
+    @slot;
   }
 }
 
@@ -77,6 +106,8 @@
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
     scroll-padding-top: 6rem;
+    /* Pinned sections change the page height above the reader; anchoring would fight the pins. */
+    overflow-anchor: none;
   }
 
   body {

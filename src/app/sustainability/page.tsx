@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { AssemblyFrame } from "@/components/motion/assembly/AssemblyFrame";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { FeatureGrid, type Feature } from "@/components/sections/FeatureGrid";
 import { PageHero } from "@/components/sections/PageHero";
@@ -51,6 +52,7 @@ export default function SustainabilityPage() {
     <>
       <PageHero
         image={photos.solar.src}
+        scene="warehouse"
         breadcrumbs={[{ name: "Sustainability & ESG", path: "/sustainability" }]}
         eyebrow="Sustainability & ESG"
         title="Building responsibly for the communities we connect."
@@ -84,9 +86,17 @@ export default function SustainabilityPage() {
 
       <section className="bg-leaf-50 py-24 sm:py-28">
         <Container className="grid items-center gap-14 lg:grid-cols-12">
-          <Reveal className="relative aspect-[4/3] overflow-hidden rounded-sm lg:col-span-5">
-            <Image src={photos.hillRoad.src} alt={photos.hillRoad.alt} fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
-          </Reveal>
+          <div className="space-y-6 lg:col-span-5">
+            <Reveal data-clip="" className="relative aspect-[4/3] overflow-hidden rounded-sm">
+              <Image src={photos.hillRoad.src} alt={photos.hillRoad.alt} fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
+            </Reveal>
+            <AssemblyFrame
+              model="warehouse"
+              label="Illustrative 3D model: an industrial building with rooftop solar and rainwater storage being built"
+              backdrop="#ffffff"
+              className="aspect-[4/3]"
+            />
+          </div>
           <div className="lg:col-span-7">
             <SectionHeading eyebrow="On our sites" title="Responsible practice, built into daily work." />
             <div className="mt-10">

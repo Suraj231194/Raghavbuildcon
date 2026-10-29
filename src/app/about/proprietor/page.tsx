@@ -19,6 +19,7 @@ export default function ProprietorPage() {
     <>
       <PageHero
         image={photos.engineers.src}
+        scene="township"
         breadcrumbs={[{ name: "About", path: "/about" }, { name: "About the Proprietor", path: "/about/proprietor" }]}
         eyebrow="Leadership"
         title="About the Proprietor"
@@ -28,14 +29,16 @@ export default function ProprietorPage() {
         <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-20">
           <Reveal className="mx-auto w-full max-w-md lg:col-span-5">
             <figure className="overflow-hidden rounded-sm border border-ink-100 bg-white shadow-xl shadow-ink-950/5">
-              <Image
-                src={proprietor.image.src}
-                alt={proprietor.image.alt}
-                width={1145}
-                height={1374}
-                sizes="(min-width: 1024px) 40vw, (min-width: 640px) 448px, 100vw"
-                className="h-auto w-full"
-              />
+              <div data-clip="" className="overflow-hidden">
+                <Image
+                  src={proprietor.image.src}
+                  alt={proprietor.image.alt}
+                  width={1145}
+                  height={1374}
+                  sizes="(min-width: 1024px) 40vw, (min-width: 640px) 448px, 100vw"
+                  className="h-auto w-full"
+                />
+              </div>
               <figcaption className="border-t-2 border-gold-500 px-6 py-5">
                 <p className="font-display text-xl font-semibold text-ink-950">{proprietor.name}</p>
                 <p className="mt-1 text-sm font-semibold text-gold-700">Proprietor, Raghav Buildcon</p>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectCard } from "@/components/cards/ProjectCard";
+import { AssemblyStory } from "@/components/motion/assembly/AssemblyStory";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { FeatureGrid } from "@/components/sections/FeatureGrid";
 import { PageHero } from "@/components/sections/PageHero";
@@ -11,6 +12,7 @@ import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { verticalAssembly } from "@/content/assembly";
 import { projects } from "@/content/projects";
 import { deliveryProcess, getVertical, verticals } from "@/content/verticals";
 import { pageMetadata } from "@/lib/seo";
@@ -34,6 +36,7 @@ export default async function VerticalPage({ params }: Props) {
   if (!vertical) notFound();
   const related = projects.filter((p) => p.vertical === vertical.slug);
   const others = verticals.filter((v) => v.slug !== vertical.slug);
+  const assembly = verticalAssembly[vertical.slug];
 
   return (
     <>
@@ -76,6 +79,9 @@ export default async function VerticalPage({ params }: Props) {
           </Reveal>
         </Container>
       </section>
+
+      {/* The vertical's build sequence, assembled as the reader scrolls */}
+      <AssemblyStory model={assembly.model} id="build-sequence" eyebrow="How it comes together" title={assembly.title} lead={assembly.lead} />
 
       {/* Capabilities */}
       <section className="bg-sand-50 py-24 sm:py-28">

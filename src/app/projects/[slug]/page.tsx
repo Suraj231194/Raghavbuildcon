@@ -9,6 +9,7 @@ import { Container } from "@/components/ui/Container";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { OrPending, PlaceholderNote, SampleBadge } from "@/components/ui/Placeholder";
 import { Reveal } from "@/components/ui/Reveal";
+import { verticalAssembly } from "@/content/assembly";
 import { getProject, projects } from "@/content/projects";
 import type { ProjectFacts } from "@/content/types";
 import { verticalMap } from "@/content/verticals";
@@ -49,6 +50,7 @@ export default async function ProjectPage({ params }: Props) {
     <>
       <PageHero
         image={project.image.src}
+        scene={verticalAssembly[project.vertical].model}
         breadcrumbs={[
           { name: "Projects", path: "/projects" },
           { name: project.title, path: `/projects/${project.slug}` },
@@ -127,7 +129,7 @@ export default async function ProjectPage({ params }: Props) {
                   {project.gallery.map((img, i) => (
                     <Reveal as="li" key={img.src} delay={i * 80}>
                       <figure className="overflow-hidden rounded-sm bg-ink-100">
-                        <div className="relative aspect-[4/3]">
+                        <div data-clip="" className="relative aspect-[4/3] overflow-hidden">
                           <Image src={img.src} alt={img.alt} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
                         </div>
                       </figure>

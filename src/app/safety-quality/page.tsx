@@ -39,6 +39,7 @@ export default function SafetyQualityPage() {
     <>
       <PageHero
         image={photos.safety.src}
+        scene="tower"
         breadcrumbs={[{ name: "Safety & Quality", path: "/safety-quality" }]}
         eyebrow="Safety & quality"
         title="Zero harm is the standard. Quality is the proof."
@@ -69,7 +70,7 @@ export default function SafetyQualityPage() {
             <div className="lg:col-span-6">
               <SectionHeading tone="light" eyebrow="Quality assurance & control" title="Built to specification — and proven." lead="Our QA/QC system checks every critical stage, so quality is demonstrated, not assumed." />
             </div>
-            <Reveal delay={100} className="relative aspect-[16/10] overflow-hidden rounded-sm lg:col-span-6">
+            <Reveal delay={100} data-clip="" className="relative aspect-[16/10] overflow-hidden rounded-sm lg:col-span-6">
               <Image src={photos.engineers.src} alt={photos.engineers.alt} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
             </Reveal>
           </div>
